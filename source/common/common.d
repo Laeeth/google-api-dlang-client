@@ -8,6 +8,39 @@ import std.json : parseJSON, JSONValue;
 import std.typecons : tuple, Tuple;
 import std.conv : to;
 
+string GetterSetter(string Type, string ClassName)(string name) {
+  import std.ascii : toUpper;
+  return `
+    import std.traits : isAggregateType, isArray;
+    import std.range.primitives : ElementType;
+    public auto get` ~ name[0].toUpper ~ name[1..$] ~ `() {
+      return this._` ~ name ~ `;
+    }
+
+    public ` ~ ClassName ~ ` set` ~ name[0].toUpper ~ name[1..$] ~ `(` ~ Type ~ ` setter_arg) {
+      this._` ~ name ~ ` = setter_arg;
+      return this;
+    }
+  `;
+}
+
+string GetterSetterAssoc(string Type, string ClassName)(string name) {
+  import std.ascii : toUpper;
+  return `
+    import std.traits : isAggregateType, isArray;
+    import std.range.primitives : ElementType;
+    public auto get` ~ name[0].toUpper ~ name[1..$] ~ `() {
+      return this._` ~ name ~ `;
+    }
+
+    public ` ~ ClassName ~ ` set` ~ name[0].toUpper ~ name[1..$] ~ `(` ~ Type ~ ` setter_arg) {
+      this._` ~ name ~ ` = setter_arg;
+      this["` ~ name ~ `"] = JSONValue(setter_arg);
+      return this;
+    }
+  `;
+}
+
 string GetterSetterAssocArray(string ValueType, string Type, string ClassName)(string Name) {
     import std.ascii : toUpper;
     return 
@@ -235,51 +268,64 @@ class APIRequest(ReqBody, RequestT = Request, ResponseT = Response) {
     return this;
   }
 
-  this(string url, string[string] headers, string[string] params = string[string].init) {
+  this(string url, ReqBody content = ReqBody.init, string mediaContent = string.init) {
     static if (is(RequestT == Request)) {
       this.req = Request();
       this.req.sslSetVerifyPeer(false);
-      this.req.addHeaders(headers);
     }
 
-    this.prettyPrint = true;
+    if (content != ReqBody.init) {
+      this.body = content;
+    }
+
     this.url = url.parseURL;
-
-    with (this.url) {
-      foreach (key, value; params) {
-        queryParams.add(key, value);
-      }
-    }
   }
 
   ReqBody exec(string HttpRequest)() {
+    import vibe.data.json;
+
     string content;
     static if (HttpRequest == "GET") {
       content = "";
     } else {
-      content = body.toString;
+      content = body.serializeToJson().toString;
     }
     req.addHeaders([
       "Authorization": "Bearer " ~ oauthToken,
       "Content-Type": "application/json"
     ]);
-    this.body = parseJSON(req.exec!HttpRequest(url, content, "application/json").responseBody.toString);
+
+    string stringResponse = req.exec!HttpRequest(url, content, "application/json").responseBody.toString;
+
+    import std.regex;
+    auto re = regex("[a-zA-Z./]+\":");
+    stringResponse = replaceAll(stringResponse, re, "_$&");
+
+    Json response = Json(parseJSON(stringResponse));
+    writeln("=============================\n\n\n");
+    writeln(response.toString);
+    writeln("============================\n\n\n");
+
+    this.body = deserializeJson!ReqBody(response);
+
     return this.body;
   }
 
   static const int MB = 0x100000;
 
   ReqBody upload(string InitialHttpRequest, InputStream = string)(InputStream inputStream) {
+    import vibe.data.json;
     req.addHeaders([
         "Authorization": "Bearer " ~ oauthToken
     ]);
     if (this.body == ReqBody.init) {
       addQueryParams("uploadType", "media");
-      this.body = parseJSON(req.exec!InitialHttpRequest(url, inputStream).responseBody.toString);
+      auto response = parseJSON(req.exec!InitialHttpRequest(url, inputStream).responseBody.toString);
+      this.body = deserializeJson!ReqBody(response.toString);
     } else {
       addQueryParams("uploadType", "resumable");
       import std.json : JSONOptions;
-      string metadata = body.toString(JSONOptions.doNotEscapeSlashes);
+      string metadata = body.serializeToJson().toString;
 
       req.addHeaders([
         "Content-Type": "application/json"
@@ -294,7 +340,8 @@ class APIRequest(ReqBody, RequestT = Request, ResponseT = Response) {
       ]);
 
       response = req.exec!"PUT"(location, inputStream);
-      this.body = parseJSON(response.responseBody.toString);
+
+      this.body = deserializeJson!ReqBody(parseJSON(response.responseBody.toString).toString);
     }
 
     return this.body;

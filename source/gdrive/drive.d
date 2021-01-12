@@ -128,7 +128,7 @@ public class Drive {
         }
 
         public class Get(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.About.About, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.about.About, RequestT, ResponseT) {
             public static const string REST_PATH = "about";
 
             protected this() {
@@ -166,7 +166,7 @@ public class Drive {
                 }
             }
 
-            public gdrive.models.About.About execute() {
+            public gdrive.models.about.About execute() {
                 return super.exec!"GET"();
             }
         }
@@ -184,7 +184,7 @@ public class Drive {
         }
 
         public class GetStartPageToken(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.StartPageToken.StartPageToken, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.startpagetoken.StartPageToken, RequestT, ResponseT) {
             private static const string REST_PATH = "changes/startPageToken";
 
             protected this() {
@@ -348,7 +348,7 @@ public class Drive {
                 return cast(GetStartPageToken) super.addQueryParams("teamDriveId", teamDriveId);
             }
 
-            public gdrive.models.StartPageToken.StartPageToken execute() {
+            public gdrive.models.startpagetoken.StartPageToken execute() {
                 return super.exec!"GET"();
             }
         }
@@ -360,7 +360,7 @@ public class Drive {
         }
 
         public class List(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.ChangeList.ChangeList, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.changelist.ChangeList, RequestT, ResponseT) {
             private static const string REST_PATH = "changes";
 
             protected this(string pageToken) {
@@ -671,7 +671,7 @@ public class Drive {
                 return cast(List) super.addQueryParams("teamDriveId", teamDriveId);
             }
 
-            public gdrive.models.ChangeList.ChangeList execute() {
+            public gdrive.models.changelist.ChangeList execute() {
                 return super.exec!"GET"();
             }
         }
@@ -1198,17 +1198,17 @@ public class Drive {
     }
 
     public class Channels {
-        public Stop!(Request, Response) stop(gdrive.models.stop.Stop content) {
+        public Stop!(Request, Response) stop(gdrive.models.channel.Channel content) {
             Stop!(Request, Response) result = new Stop!(Request, Response)(content);
             initialize!(Request, Response, Stop)(result);
             return result;
         }
 
         public class Stop(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.stop.Stop, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.channel.Channel, RequestT, ResponseT) {
             private static const string REST_PATH = "channels/stop";
 
-            protected this(gdrive.models.stop.Stop content) {
+            protected this(gdrive.models.channel.Channel content) {
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ REST_PATH;
                 super(url, string[string].init);
                 this.body = content;
@@ -1244,7 +1244,7 @@ public class Drive {
                 }
             }
 
-            public gdrive.models.stop.Stop execute() {
+            public gdrive.models.channel.Channel execute() {
                 return super.exec!"POST"();
             }
         }
@@ -1255,17 +1255,17 @@ public class Drive {
     }
 
     public class Comments {
-        public Create!(Request, Response) create(string fileId, gdrive.models.comments.Comment content) {
+        public Create!(Request, Response) create(string fileId, gdrive.models.comment.Comment content) {
             Create!(Request, Response) result = new Create!(Request, Response)(fileId, content);
             initialize!(Request, Response, Create)(result);
             return result;
         }
 
         public class Create(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.comments.Comment, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.comment.Comment, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s/comments";
 
-            protected this(string fileId, gdrive.models.comments.Comment content) {
+            protected this(string fileId, gdrive.models.comment.Comment content) {
                 import std.format : format;
                 string formatedStringRestPath = format!REST_PATH(fileId);
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ formatedStringRestPath;
@@ -1323,7 +1323,7 @@ public class Drive {
                 return cast(Create) super.addQueryParams(parameterName, to!(string)(value));
             }
 
-            public gdrive.models.comments.Comment execute() {
+            public gdrive.models.comment.Comment execute() {
                 return super.exec!"POST"();
             }
         }
@@ -1335,7 +1335,7 @@ public class Drive {
         }
 
         public class Delete(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.comments.Comment, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.comment.Comment, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s/comments/%s";
 
             protected this(string fileId, string commentId) {
@@ -1412,8 +1412,8 @@ public class Drive {
                 return cast(Delete) super.addQueryParams(parameterName, to!(string)(value));
             }
 
-            public gdrive.models.comments.Comment execute() {
-                return super.exec!"DELETE"();
+            public void execute() {
+                super.exec!"DELETE"();
             }
         }
 
@@ -1424,7 +1424,7 @@ public class Drive {
         }
 
         public class Get(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.comments.Comment, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.comment.Comment, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s/comments/%s";
 
             protected this(string fileId, string commentId) {
@@ -1540,9 +1540,9 @@ public class Drive {
             * </p>
             */
             public bool isIncludeDeleted() {
-            if (includeDeleted.isNull) {
-                return false;
-            }
+                if (includeDeleted.isNull) {
+                    return false;
+                }
                 return includeDeleted.get;
             }
 
@@ -1551,7 +1551,7 @@ public class Drive {
                     to!(string)(value));
             }
 
-            public gdrive.models.comments.Comment execute() {
+            public gdrive.models.comment.Comment execute() {
                 return super.exec!"GET"();
             }
         }
@@ -1735,7 +1735,7 @@ public class Drive {
         }
 
         public Update!(Request, Response) update(string fileId, string commentId,
-            gdrive.models.comments.Comment content) {
+            gdrive.models.comment.Comment content) {
             Update!(Request, Response) result =
                 new Update!(Request, Response)(fileId, commentId, content);
             initialize!(Request, Response, Update)(result);
@@ -1743,11 +1743,11 @@ public class Drive {
         }
 
         public class Update(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.comments.Comment, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.comment.Comment, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s/comments/%s";
 
             protected this(string fileId, string commentId,
-                gdrive.models.comments.Comment content) {
+                gdrive.models.comment.Comment content) {
                 import std.format : format;
                 string formatedStringRestPath = format!REST_PATH(fileId, commentId);
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ formatedStringRestPath;
@@ -1822,7 +1822,7 @@ public class Drive {
                 to!(string)(value));
             }
 
-            public gdrive.models.comments.Comment execute() {
+            public gdrive.models.comment.Comment execute() {
                 return super.exec!"PATCH"();
             }
         }
@@ -1834,17 +1834,17 @@ public class Drive {
 
     public class Drives {
         public Create!(Request, Response) create(string requestId,
-            gdrive.models.Drive.Drive content) {
+            gdrive.models.drive.Drive content) {
             Create!(Request, Response) result = new Create!(Request, Response)(requestId, content);
             initialize!(Request, Response, Create)(result);
             return result;
         }
 
         public class Create(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Drive.Drive, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.drive.Drive, RequestT, ResponseT) {
             private static const string REST_PATH = "drives";
 
-            protected this(string requestId, gdrive.models.Drive.Drive content) {
+            protected this(string requestId, gdrive.models.drive.Drive content) {
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ REST_PATH;
                 super(url, string[string].init);
                 this.body = content;
@@ -1919,7 +1919,7 @@ public class Drive {
                 to!(string)(value));
             }
 
-            public gdrive.models.Drive.Drive execute() {
+            public gdrive.models.drive.Drive execute() {
                 return super.exec!"POST"();
             }
         }
@@ -1931,7 +1931,7 @@ public class Drive {
         }
 
         public class Delete(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Drive.Drive, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.drive.Drive, RequestT, ResponseT) {
             private static const string REST_PATH = "drives/%s";
 
             protected this(string driveId) {
@@ -1992,8 +1992,8 @@ public class Drive {
                     to!(string)(value));
             }
 
-            public gdrive.models.Drive.Drive execute() {
-                return super.exec!"DELETE"();
+            public void execute() {
+                super.exec!"DELETE"();
             }
         }
 
@@ -2004,7 +2004,7 @@ public class Drive {
         }
 
         public class Get(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Drive.Drive, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.drive.Drive, RequestT, ResponseT) {
             private static const string REST_PATH = "drives/%s";
 
             protected this(string driveId) {
@@ -2119,6 +2119,10 @@ public class Drive {
                 return cast(Get) super.addQueryParams(parameterName,
                     to!(string)(value));
             }
+
+            public gdrive.models.drive.Drive execute() {
+                return super.exec!"GET"();
+            }
         }
 
         public Hide!(Request, Response) hide(string driveId) {
@@ -2128,7 +2132,7 @@ public class Drive {
         }
 
         public class Hide(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Drive.Drive, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.drive.Drive, RequestT, ResponseT) {
             private static const string REST_PATH = "drives/%s/hide";
 
             protected this(string driveId) {
@@ -2188,6 +2192,10 @@ public class Drive {
                 return cast(Hide) super.set(parameterName,
                     to!(string)(value));
             }
+
+            public gdrive.models.drive.Drive execute() {
+                return super.exec!"POST"();
+            }
         }
 
         public Unhide!(Request, Response) unhide(string driveId) {
@@ -2197,7 +2205,7 @@ public class Drive {
         }
 
         public class Unhide(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Drive.Drive, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.drive.Drive, RequestT, ResponseT) {
             private static const string REST_PATH = "drives/%s/unhide";
 
             protected this(string driveId) {
@@ -2257,20 +2265,24 @@ public class Drive {
                 return cast(Unhide) super.set(parameterName,
                     to!(string)(value));
             }
+
+            public gdrive.models.drive.Drive execute() {
+                return super.exec!"POST"();
+            }
         }
 
         public Update!(Request, Response) update(string driveId,
-            gdrive.models.Drive.Drive content) {
+            gdrive.models.drive.Drive content) {
             Update!(Request, Response) result = new Update!(Request, Response)(driveId, content);
             initialize!(Request, Response, Update)(result);
             return result;
         }
 
         public class Update(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Drive.Drive, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.drive.Drive, RequestT, ResponseT) {
             private static const string REST_PATH = "drives/%s";
 
-            protected this(string driveId, gdrive.models.Drive.Drive content) {
+            protected this(string driveId, gdrive.models.drive.Drive content) {
                 import std.format : format;
                 string formatedRestPath = format!REST_PATH(driveId);
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ formatedRestPath;
@@ -2383,7 +2395,7 @@ public class Drive {
                     to!(string)(value));
             }
 
-            public gdrive.models.Drive.Drive execute() {
+            public gdrive.models.drive.Drive execute() {
                 return super.exec!"POST"();
             }
         }
@@ -2395,17 +2407,17 @@ public class Drive {
 
     public class Files {
         public Copy!(Request, Response) copy(string fileId,
-            gdrive.models.File.File content) {
+            gdrive.models.file.File content) {
             Copy!(Request, Response) result = new Copy!(Request, Response)(fileId, content);
             initialize!(Request, Response, Copy)(result);
             return result;
         }
 
         public class Copy(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.File.File, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.file.File, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s/copy";
 
-            protected this(string fileId, gdrive.models.File.File content) {
+            protected this(string fileId, gdrive.models.file.File content) {
                 import std.format : format;
                 string formatedRestPath = format!REST_PATH(fileId);
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ formatedRestPath;
@@ -2752,18 +2764,18 @@ public class Drive {
                 to!(string)(value));
             }
 
-            public gdrive.models.File.File execute() {
+            public gdrive.models.file.File execute() {
                 return super.exec!"POST"();
             }
         }
 
-        public Create!(Request, Response) create(gdrive.models.File.File content) {
+        public Create!(Request, Response) create(gdrive.models.file.File content) {
             Create!(Request, Response) result = new Create!(Request, Response)(content);
             initialize!(Request, Response, Create)(result);
             return result;
         }
 
-        public Create!(Request, Response) create(gdrive.models.File.File content,
+        public Create!(Request, Response) create(gdrive.models.file.File content,
             string mediaContent) {
             Create!(Request, Response) result = new Create!(Request, Response)(content, mediaContent);
             initialize!(Request, Response, Create)(result);
@@ -2771,17 +2783,17 @@ public class Drive {
         }
 
         public class Create(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.File.File, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.file.File, RequestT, ResponseT) {
             private static const string REST_PATH = "files";
 
-            protected this(InputStream = string)(gdrive.models.File.File content, InputStream mediaContent) {
+            protected this(InputStream = string)(gdrive.models.file.File content, InputStream mediaContent) {
                 string url = Drive.DEFAULT_ROOT_URL ~ "/upload" ~ Drive.DEFAULT_SERVICE_PATH ~ REST_PATH;
                 super(url, string[string].init);
                 this.body = content;
                 this.mediaContent = mediaContent;
             }
 
-            protected this(gdrive.models.File.File content) {
+            protected this(gdrive.models.file.File content) {
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ REST_PATH;
                 super(url, string[string].init);
                 this.body = content;
@@ -3149,7 +3161,7 @@ public class Drive {
 
             string mediaContent;
 
-            public gdrive.models.File.File execute() {
+            public gdrive.models.file.File execute() {
                 if (this.mediaContent == string.init) {
                     return super.exec!"POST"();
                 } else {
@@ -3165,7 +3177,7 @@ public class Drive {
         }
 
         public class Delete(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.File.File, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.file.File, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s";
 
             protected this(string fileId) {
@@ -3366,7 +3378,7 @@ public class Drive {
                     to!(string)(value));
             }
 
-            public gdrive.models.File.File execute() {
+            public gdrive.models.file.File execute() {
                 return super.exec!"DELETE"();
             }
         }
@@ -3378,7 +3390,7 @@ public class Drive {
         }
 
         public class EmptyTrash(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.File.File, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.file.File, RequestT, ResponseT) {
             private static const string REST_PATH = "files/trash";
 
             protected this() {
@@ -3485,7 +3497,7 @@ public class Drive {
         }
 
         public class Export(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.File.File, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.file.File, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s/export";
 
             protected this(string fileId, string mimeType) {
@@ -3575,7 +3587,7 @@ public class Drive {
         }
 
         public class GenerateIds(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.generatedIds.GeneratedIds, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.generatedids.GeneratedIds, RequestT, ResponseT) {
             private static const string REST_PATH = "files/generateIds";
 
             protected this() {
@@ -3656,7 +3668,7 @@ public class Drive {
                     to!(string)(value));
             }
 
-            public gdrive.models.generatedIds.GeneratedIds execute() {
+            public gdrive.models.generatedids.GeneratedIds execute() {
                 return super.exec!"GET"();
             }
         }
@@ -3668,7 +3680,7 @@ public class Drive {
         }
 
         public class Get(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.File.File, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.file.File, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s";
 
             protected this(string fileId) {
@@ -3898,7 +3910,7 @@ public class Drive {
                 outputStream.put(super.execUnparsed!"GET"());
             }
 
-            public gdrive.models.File.File execute()() {
+            public gdrive.models.file.File execute()() {
                 return super.exec!"GET"();
             }
         }
@@ -4359,14 +4371,14 @@ public class Drive {
             }
         }
 
-        public Update!(Request, Response) update(string fileId, gdrive.models.File.File content) {
+        public Update!(Request, Response) update(string fileId, gdrive.models.file.File content) {
             Update!(Request, Response) result = new Update!(Request, Response)(fileId, content);
             initialize!(Request, Response, Update)(result);
             return result;
         }
 
         public auto update
-            (string fileId, gdrive.models.File.File content, string mediaContent) {
+            (string fileId, gdrive.models.file.File content, string mediaContent) {
             Update!(Request, Response) result = new Update!(Request, Response)
                 (fileId, content, mediaContent);
             initialize!(Request, Response, Update)(result);
@@ -4374,10 +4386,10 @@ public class Drive {
         }
 
         public class Update(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.File.File, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.file.File, RequestT, ResponseT) {
             private static const string REST_PATH = "files/%s";
 
-            protected this(string fileId, gdrive.models.File.File content) {
+            protected this(string fileId, gdrive.models.file.File content) {
                 import std.format : format;
                 string formatedRestPath = format!REST_PATH(fileId);
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ formatedRestPath;
@@ -4385,7 +4397,7 @@ public class Drive {
                 this.body = content;
             }
 
-            protected this(string fileId, gdrive.models.File.File content,
+            protected this(string fileId, gdrive.models.file.File content,
                 string mediaContent) {
                 import std.format : format;
                 string formatedRestPath = format!REST_PATH(fileId);
@@ -4748,7 +4760,7 @@ public class Drive {
 
             string mediaContent;
 
-            public gdrive.models.File.File execute() {
+            public gdrive.models.file.File execute() {
                 if (mediaContent == "") {
                     return super.exec!"PATCH"();
                 } else {
@@ -5001,18 +5013,18 @@ public class Drive {
 
     public class Permissions {
         public Create!(Request, Response) create(string fileId,
-            gdrive.models.Permission.Permission content) {
+            gdrive.models.permission.Permission content) {
             Create!(Request, Response) result = new Create!(Request, Response)(fileId, content);
             initialize!(Request, Response, Create)(result);
             return result;
         }
 
         public class Create(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Permission.Permission, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.permission.Permission, RequestT, ResponseT) {
             public static const string REST_PATH = "files/%s/permissions";
 
             protected this(string fileId,
-                gdrive.models.Permission.Permission content) {
+                gdrive.models.permission.Permission content) {
                 import std.format : format;
                 string formatedRestPath = format!REST_PATH(fileId);
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ formatedRestPath;
@@ -5408,7 +5420,7 @@ public class Drive {
                     to!(string)(value));
             }
 
-            public gdrive.models.Permission.Permission execute() {
+            public gdrive.models.permission.Permission execute() {
                 return super.exec!"POST"();
             }
         }
@@ -5420,7 +5432,7 @@ public class Drive {
         }
 
         public class Delete(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Permission.Permission, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.permission.Permission, RequestT, ResponseT) {
             public static const string REST_PATH = "files/%s/permissions/%s";
 
             protected this(string fileId, string permissionId) {
@@ -5650,7 +5662,7 @@ public class Drive {
         }
 
         public class Get(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Permission.Permission, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.permission.Permission, RequestT, ResponseT) {
             public static const string REST_PATH = "files/%s/permissions/%s";
 
             protected this(string fileId, string permissionId) {
@@ -5867,6 +5879,10 @@ public class Drive {
             public Get set(T)(string parameterName, T value) {
                 return cast(Get) super.set(parameterName,
                     to!(string)(value));
+            }
+
+            public gdrive.models.permission.Permission execute() {
+                return super.exec!"GET"();
             }
         }
 
@@ -6159,18 +6175,18 @@ public class Drive {
         }
 
         public Update!(Request, Response) update(string fileId, string permissionId,
-            gdrive.models.Permission.Permission content) {
+            gdrive.models.permission.Permission content) {
             Update!(Request, Response) result = new Update!(Request, Response)(fileId, permissionId, content);
             initialize!(Request, Response, Update)(result);
             return result;
         }
 
         public class Update(RequestT = Request, ResponseT = Response) :
-            APIRequest!(gdrive.models.Permission.Permission, RequestT, ResponseT) {
+            APIRequest!(gdrive.models.permission.Permission, RequestT, ResponseT) {
             public static const string REST_PATH = "files/%s/permissions/%s";
 
             protected this(string fileId, string permissionId,
-                gdrive.models.Permission.Permission content) {
+                gdrive.models.permission.Permission content) {
                 import std.format : format;
                 string formatedRestPath = format!REST_PATH(fileId, permissionId);
                 string url = Drive.DEFAULT_ROOT_URL ~ Drive.DEFAULT_SERVICE_PATH ~ formatedRestPath;
@@ -6483,7 +6499,7 @@ public class Drive {
                     to!(string)(value));
             }
 
-            public gdrive.models.Permission.Permission execute() {
+            public gdrive.models.permission.Permission execute() {
                 return super.exec!"PATCH"();
             }
         }
@@ -7085,7 +7101,7 @@ public class Drive {
                 outputStream.put(super.execUnparsed!"GET"());
             }
 
-            public gdrive.models.File.File execute()() {
+            public gdrive.models.file.File execute()() {
                 return super.exec!"GET"();
             }
         }

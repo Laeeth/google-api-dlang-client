@@ -7,7 +7,8 @@
 		"cerealed": "~>0.6.11",
 		"jsonizer": "~>0.7.6",
 		"requests": "~>1.1.6",
-		"urld": "~>2.1.1"
+		"urld": "~>2.1.1",
+		"vibe-d": "~>0.9.2"
 	},
 	"description": "A minimal D application.",
 	"license": "proprietary",

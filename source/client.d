@@ -18,6 +18,12 @@ enum string DRIVE_URI = "https://www.googleapis.com/drive/v3/files";
 enum string GOOGLE_API_OAUTH_AUTH = "https://accounts.google.com/o/oauth2/v2/auth";
 enum string DRIVE_SCOPE = "https://www.googleapis.com/auth/drive";
 
+enum string[string] SCOPES = [
+	"gdrive": "https://www.googleapis.com/auth/drive",
+	"gcalendar": "https://www.googleapis.com/auth/calendar",
+	"gmail": "https://mail.google.com/"
+];
+
 enum string AUTHORIZE_STRING = "%s?code=%s&client_id=%s&client_secret=%s&" ~
 	"redirect_uri=%s&grant_type=authorization_code";
 enum string REFRESH_TOKEN_STRING = "%s?client_id=%s&client_secret=%s&" ~
@@ -28,29 +34,30 @@ enum string CODE_STRING = "%s?scope=%s&redirect_uri=%s&client_id=%s&" ~
 class Client {
 	private string clientId;
 	private string clientSecret;
-	string clientCode;
+	private string clientCode;
 	private string redirectUri;
 	private string driveScope;
-	private string accessTokenFile;
 
-	this(string clientSecretFile) {
+	private static const string ACCESS_TOKEN_FILE = "access_token.cerealed";
+	private static const string REFRESH_TOKEN_FILE = "refresh_token.cerealed";
+
+	this(string credentialsFile, string lib = "gdrive") {
 		import std.file : readText, exists;
 
 		string clientSecretText;
 		JSONValue clientSecretJson;
 
-		assert(clientSecretFile.exists, "Credentials file does not exist.");
+		enforce(clientSecretFile.exists, "Credentials file does not exist.");
 
-		clientSecretText = readText(clientSecretFile);
-		clientSecretJson = parseJSON(clientSecretText);
+		credentialsTextContent = readText(credentialsFile);
+		credentialsJsonContent = parseJSON(credentialsJsonContent);
 
-		this.clientId = clientSecretJson["web"]["client_id"].toString[1 .. $ - 1];
-		this.clientSecret = clientSecretJson["web"]["client_secret"].toString[1 .. $ - 1];
-		this.redirectUri = clientSecretJson["web"]["redirect_uris"][0]
-							.toString(JSONOptions.doNotEscapeSlashes)[1 .. $ - 1];
-		this.accessTokenFile = "access_token.pickle";
+		this.clientId = credentialsJsonContent["web"]["client_id"].str;
+		this.clientSecret = credentialsJsonContent["web"]["client_secret"].str;
+		this.redirectUri = "http://localhost:5555";
+		this.driveScope = Scopes[lib];
 
-		if (!accessTokenFile.exists) {
+		if (!ACCESS_TOKEN_FILE.exists) {
 			this.authorize();
 		}
 	}
@@ -95,12 +102,12 @@ class Client {
   	RequestT authorizeRequest = Request();
 
   	writeln("To authorize the client, please use this link " ~
-  		this.toCodeString ~ " and authorize it to use your GDrive.");
+  		this.toCodeString ~ " and authorize it.");
   	ushort port = to!(ushort)(this.redirectUri.split(":")[2].split("/")[0]);
   	stdout.flush();
 
   	this.clientCode = this.getCode(port);
-		assert(this.clientCode != "", "Could not retrieve the authentication_code.");
+		enforce(this.clientCode != "", "Could not retrieve the authentication_code.");
 
   	authorizeRequest.sslSetVerifyPeer(false);
 
@@ -114,9 +121,9 @@ class Client {
   								Clock.currTime() + to!(int)(authorizeJson["expires_in"].toString).seconds);
   	writeln(Clock.currTime() + to!(int)(authorizeJson["expires_in"].toString).seconds);
   	auto serializedAccessToken = accessToken.cerealise;
-  	write("access_token.pickle", serializedAccessToken);
+  	write(ACCESS_TOKEN_FILE, serializedAccessToken);
   	auto  serializedRefreshToken = cerealise(cast(ubyte[])authorizeJson["refresh_token"].toString);
-  	write("refresh_token.pickle", serializedRefreshToken);
+  	write(REFRESH_TOKEN_FILE, serializedRefreshToken);
 
   	return 0;
   }
@@ -129,7 +136,7 @@ class Client {
 		ResponseT accessTokenRes;
   	RequestT refreshRequest = Request();
 
-  	serializedRefreshToken = cast(ubyte[])read("refresh_token.pickle");
+  	serializedRefreshToken = cast(ubyte[])read(REFRESH_TOKEN_FILE);
   	deserializedRefreshToken = decerealise!string(serializedRefreshToken);
   	deserializedRefreshToken = deserializedRefreshToken[1 .. $ - 1].replace("\\", "");
 
@@ -138,12 +145,10 @@ class Client {
 		accessTokenRes = refreshRequest.post(this.toRefreshTokenString(deserializedRefreshToken), []);
 		accessTokenJson = parseJSON(accessTokenRes.responseBody.toString);
 
-		assert(accessTokenRes.code == 200, "");
-
   	accessToken = AccessToken(accessTokenJson["access_token"].toString,
   		Clock.currTime() + to!(int)(accessTokenJson["expires_in"].toString).seconds);
   	serializedAccessToken = accessToken.cerealise;
-  	write("access_token.pickle", serializedAccessToken);
+  	write(ACCESS_TOKEN_FILE, serializedAccessToken);
   	return accessToken;
   }
 
@@ -152,7 +157,7 @@ class Client {
 		AccessToken accessToken;
 		bool isExpired;
 
-		accessTokenText = cast(ubyte[])read("access_token.pickle");
+		accessTokenText = cast(ubyte[])read(ACCESS_TOKEN_FILE);
 		accessToken = decerealise!AccessToken(accessTokenText);
 
 		isExpired = accessToken.expirationTime <= Clock.currTime();
@@ -165,7 +170,7 @@ class Client {
 
 	string toCodeString() {
 		return format!CODE_STRING(
-			GOOGLE_API_OAUTH_AUTH, DRIVE_SCOPE, redirectUri, clientId);
+			GOOGLE_API_OAUTH_AUTH, driveScope, redirectUri, clientId);
 	}
 
 	string toAuthorizeString() {
@@ -176,10 +181,6 @@ class Client {
 	string toRefreshTokenString(string refreshToken) {
 		return format!REFRESH_TOKEN_STRING(
 			TOKEN_URI, clientId, clientSecret, refreshToken);
-	}
-
-	string toGetContentString() {
-		return DRIVE_URI;
 	}
 }
 

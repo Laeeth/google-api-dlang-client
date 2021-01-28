@@ -34,8 +34,8 @@ public class Calendar {
 
     private Client client;
 
-    this(Client client) {
-        this.client = client;
+    this(string credentialsFile) {
+        this.client = new Client(credentialsFile, "gcalendar");
     }
 
     public void initialize(RequestT, ResponseT,
@@ -68,8 +68,8 @@ public class Calendar {
                 enforce(ruleId, RequiredMessage!"ruleId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, ruleId));
-                this.calendarId = calendarId;
-                this.ruleId = ruleId;
+                setCalendarId(calendarId);
+                setRuleId(ruleId);
             }
 
             override {
@@ -165,8 +165,8 @@ public class Calendar {
                 ruleId = enforce(ruleId, RequiredMessage!"ruleId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, ruleId));
-                this.calendarId = calendarId;
-                this.ruleId = ruleId;
+                setCalendarId(calendarId);
+                setRuleId(ruleId);
             }
 
             override {
@@ -266,7 +266,7 @@ public class Calendar {
                 enforce(content.getScope().getType(), RequiredMessage!"AclRule.getScope().getType()");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -344,8 +344,7 @@ public class Calendar {
                 return cast(Insert) super.set!(bool)("sendNotifications", sendNotifications);
             }
 
-            
-            override public Insert set(T = string)(string parameterName, T value) {
+            override public Insert set(T)(string parameterName, T value) {
                 return cast(Insert) super.set!(T)(parameterName, value);
             }
 
@@ -368,7 +367,7 @@ public class Calendar {
                 calendarId = enforce(calendarId, RequiredMessage!("calendarId"));
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -552,8 +551,8 @@ public class Calendar {
                 ruleId = enforce(ruleId, RequiredMessage!"ruleId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, ruleId), content);
-                this.calendarId = calendarId;
-                this.ruleId = ruleId;
+                setCalendarId(calendarId);
+                setRuleId(ruleId);
             }
 
             override {
@@ -675,8 +674,8 @@ public class Calendar {
                 enforce(content.getScope().getType(), RequiredMessage!"AclRule.getScope().getType()");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, ruleId), content);
-                this.calendarId = calendarId;
-                this.ruleId = ruleId;
+                setCalendarId(calendarId);
+                setRuleId(ruleId);
             }
 
             override {
@@ -794,7 +793,7 @@ public class Calendar {
                 calendarId = enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -980,7 +979,7 @@ public class Calendar {
                 calendarId = enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -1060,7 +1059,7 @@ public class Calendar {
                 calendarId = enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -1140,7 +1139,7 @@ public class Calendar {
                 enforce(!content.isNull, RequiredMessage!"content");
                 enforce(content.getId(), RequiredMessage!"CalendarListEntry.getId()");
 
-                super(DEFAULT_BASE_URL, content);
+                super(DEFAULT_BASE_URL ~ REST_PATH, content);
             }
 
             override {
@@ -1218,7 +1217,7 @@ public class Calendar {
             private static const string REST_PATH = "users/me/calendarList";
 
             protected this() {
-                super(DEFAULT_BASE_URL, content);
+                super(DEFAULT_BASE_URL ~ REST_PATH);
             }
 
             override {
@@ -1255,7 +1254,6 @@ public class Calendar {
             * Maximum number of entries returned on one result page. By default the value is 100 entries.
             * The page size can never be larger than 250 entries. Optional.
             */
-            
             private int maxResults;
 
             /** Maximum number of entries returned on one result page. By default the value is 100 entries. The
@@ -1418,6 +1416,7 @@ public class Calendar {
                 calendarId = enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
+                setCalendarId(calendarId);
             }
 
             override {
@@ -1524,6 +1523,7 @@ public class Calendar {
                 calendarId = enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
+                setCalendarId(calendarId);
             }
 
             override {
@@ -1828,7 +1828,7 @@ public class Calendar {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -1908,7 +1908,7 @@ public class Calendar {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -1988,7 +1988,7 @@ public class Calendar {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
-                this.calendarId = calendarId;
+                setCalendarId(calendarId);
             }
 
             override {
@@ -2125,6 +2125,7 @@ public class Calendar {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
+                setCalendarId(calendarId);
             }
 
             override {
@@ -2201,10 +2202,11 @@ public class Calendar {
             APIRequest!(gcalendar.models.calendar.Calendar, RequestT, ResponseT) {
             private static const string REST_PATH = "calendars/%s";
 
-            protected this(gcalendar.models.calendar.Calendar content) {
+            protected this(string calendarId, gcalendar.models.calendar.Calendar content) {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
+                setCalendarId(calendarId);
             }
 
             override {
@@ -2409,6 +2411,8 @@ public class Calendar {
                 enforce(eventId, RequiredMessage!"eventId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId));
+                setCalendarId(calendarId);
+                setEventId(eventId);
             }
 
             override {
@@ -2546,6 +2550,8 @@ public class Calendar {
                 enforce(eventId, RequiredMessage!"eventId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId));
+                setCalendarId(calendarId);
+                setEventId(eventId);
             }
 
             override {
@@ -2646,7 +2652,6 @@ public class Calendar {
             * The maximum number of attendees to include in the response. If there are more than the
             * specified number of attendees, only the participant is returned. Optional.
             */
-            
             private int maxAttendees;
 
             /** The maximum number of attendees to include in the response. If there are more than the specified
@@ -2711,6 +2716,7 @@ public class Calendar {
                 enforce(content.getICalUID(), RequiredMessage!"Event.getICalUID()");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
+                setCalendarId(calendarId);
             }
 
             override {
@@ -2847,6 +2853,7 @@ public class Calendar {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
+                setCalendarId(calendarId);
             }
 
             override {
@@ -3054,6 +3061,8 @@ public class Calendar {
                 enforce(eventId, RequiredMessage!"eventId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId));
+                setCalendarId(calendarId);
+                setEventId(eventId);
             }
 
             override {
@@ -3256,7 +3265,6 @@ public class Calendar {
             * Upper bound (exclusive) for an event's start time to filter by. Optional. The default is
             * not to filter by start time. Must be an RFC3339 timestamp with mandatory time zone offset.
             */
-            
             private SysTime timeMax;
 
             /** Upper bound (exclusive) for an event's start time to filter by. Optional. The default is not to
@@ -3279,7 +3287,6 @@ public class Calendar {
             * Lower bound (inclusive) for an event's end time to filter by. Optional. The default is not
             * to filter by end time. Must be an RFC3339 timestamp with mandatory time zone offset.
             */
-            
             private SysTime timeMin;
 
             /** Lower bound (inclusive) for an event's end time to filter by. Optional. The default is not to
@@ -3345,6 +3352,7 @@ public class Calendar {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
+                setCalendarId(calendarId);
             }
 
             override {
@@ -3518,7 +3526,6 @@ public class Calendar {
             }
 
             /** Token specifying which result page to return. Optional. */
-            
             private string pageToken;
 
             /** Token specifying which result page to return. Optional.
@@ -3538,7 +3545,6 @@ public class Calendar {
             * properties. This parameter might be repeated multiple times to return events that match all
             * given constraints.
             */
-            
             private string[] privateExtendedProperty;
 
             /** Extended properties constraint specified as propertyName=value. Matches only private properties.
@@ -3731,7 +3737,6 @@ public class Calendar {
             * for example, 2011-06-03T10:00:00-07:00, 2011-06-03T10:00:00Z. Milliseconds may be provided
             * but are ignored. If timeMin is set, timeMax must be greater than timeMin.
             */
-            
             private SysTime timeMax;
 
             /** Upper bound (exclusive) for an event's start time to filter by. Optional. The default is not to
@@ -3857,7 +3862,9 @@ public class Calendar {
                 enforce(destination, RequiredMessage!"destination");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId));
-                this.setDestination(destionation);
+                setCalendarId(calendarId);
+                setEventId(eventId);
+                setDestination(destionation);
             }
 
             override {
@@ -4002,11 +4009,14 @@ public class Calendar {
             *
             * Create a request for the method "events.insert".
             */
-            protected this(string calendarId, string eventId, string destination) {
+            protected this(string calendarId, string eventId,
+                    gcalendar.models.event.Event content) {
                 enforce(calendarId, RequiredMessage!"calendarId");
                 enforce(eventId, RequiredMessage!"eventId");
 
-                super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId));
+                super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId), content);
+                setCalendarId(calendarId);
+                setEventId(eventId);
             }
 
             override {
@@ -4255,6 +4265,8 @@ public class Calendar {
                 enforce(text, RequiredMessage!"text");
 
                 super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
+                setCalendarId(calendarId);
+                setText(text);
             }
 
             override {
@@ -4398,7 +4410,9 @@ public class Calendar {
                 enforce(calendarId, RequiredMessage!"calendarId");
                 enforce(eventId, RequiredMessage!"eventId");
 
-                super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId));
+                super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId, eventId), content);
+                setCalendarId(calendarId);
+                setEventId(eventId);
             }
 
             override {
@@ -4647,7 +4661,7 @@ public class Calendar {
                 gcalendar.models.channel.Channel content) {
                 enforce(calendarId, RequiredMessage!"calendarId");
 
-                super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId));
+                super(DEFAULT_BASE_URL ~ format!REST_PATH(calendarId), content);
             }
 
             override {
@@ -4709,7 +4723,6 @@ public class Calendar {
             * organizer, creator and attendees, even if no real email address is available (i.e. a
             * generated, non-working value will be provided).
             */
-            
             private Nullable!bool alwaysIncludeEmail;
 
             /** Deprecated and ignored. A value will always be returned in the email field for the organizer,
@@ -5033,7 +5046,6 @@ public class Calendar {
             * for example, 2011-06-03T10:00:00-07:00, 2011-06-03T10:00:00Z. Milliseconds may be provided
             * but are ignored. If timeMin is set, timeMax must be greater than timeMin.
             */
-            
             private SysTime timeMax;
 
             /** Upper bound (exclusive) for an event's start time to filter by. Optional. The default is not to
@@ -5215,58 +5227,308 @@ public class Calendar {
             protected this(string setting) {
                 enforce(setting, RequiredMessage!"setting");
 
-                super(DEFAULT_BASE_URL ~ REST_PATH, content);
+                super(DEFAULT_BASE_URL ~ format!REST_PATH(setting));
             }
 
             override {
-                public Get setAlt(java.lang.String alt) {
+                public Get setAlt(string alt) {
                     return cast(Get) super.setAlt(alt);
                 }
 
-                public Get setFields(java.lang.String fields) {
+                public Get setFields(string fields) {
                     return cast(Get) super.setFields(fields);
                 }
 
-                public Get setKey(java.lang.String key) {
+                public Get setKey(string key) {
                     return cast(Get) super.setKey(key);
                 }
 
-                public Get setOauthToken(java.lang.String oauthToken) {
+                public Get setOauthToken(string oauthToken) {
                     return cast(Get) super.setOauthToken(oauthToken);
                 }
 
-                public Get setPrettyPrint(java.lang.Boolean prettyPrint) {
+                public Get setPrettyPrint(bool prettyPrint) {
                     return cast(Get) super.setPrettyPrint(prettyPrint);
                 }
 
-                public Get setQuotaUser(java.lang.String quotaUser) {
+                public Get setQuotaUser(string quotaUser) {
                     return cast(Get) super.setQuotaUser(quotaUser);
                 }
 
-                public Get setUserIp(java.lang.String userIp) {
+                public Get setUserIp(string userIp) {
                     return cast(Get) super.setUserIp(userIp);
                 }
             }
 
             /** The id of the user setting. */
-            @com.google.api.client.util.Key
-            private java.lang.String setting;
+            private string setting;
 
             /** The id of the user setting.
             */
-            public java.lang.String getSetting() {
+            public string getSetting() {
                 return setting;
             }
 
             /** The id of the user setting. */
-            public Get setSetting(java.lang.String setting) {
+            public Get setSetting(string setting) {
                 this.setting = setting;
                 return this;
             }
 
-            @Override
-            public Get set(String parameterName, Object value) {
-                return (Get) super.set(parameterName, value);
+            override public Get set(T)(string parameterName, T value) {
+                return cast(Get) super.set!T(parameterName, value);
+            }
+
+            public gcalendar.models.setting.Setting execute() {
+                return super.exec!"GET"();
+            }
+        }
+
+        public List!(Request, Response) list() {
+            List!(Request, Response) result = new List!(Request, Response)();
+            initialize!(Request, Response, List)(result);
+            return result;
+        }
+
+        public class List(RequestT = Request, ResponseT = Respones) :
+            APIRequest!(gcalendar.models.settings.Settings, RequestT, ResponseT) {
+            private static const string REST_PATH = "users/me/settings";
+
+            protected this() {
+                super(DEFAULT_BASE_URL ~ REST_PATH);
+            }
+
+            override {
+                public List setAlt(string alt) {
+                    return cast(List) super.setAlt(alt);
+                }
+
+                public List setFields(string fields) {
+                    return cast(List) super.setFields(fields);
+                }
+
+                public List setKey(string key) {
+                    return cast(List) super.setKey(key);
+                }
+
+                public List setOauthToken(string oauthToken) {
+                    return cast(List) super.setOauthToken(oauthToken);
+                }
+
+                public List setPrettyPrint(bool prettyPrint) {
+                    return cast(List) super.setPrettyPrint(prettyPrint);
+                }
+
+                public List setQuotaUser(string quotaUser) {
+                    return cast(List) super.setQuotaUser(quotaUser);
+                }
+
+                public List setUserIp(string userIp) {
+                    return cast(List) super.setUserIp(userIp);
+                }
+            }
+
+            /**
+            * Maximum number of entries returned on one result page. By default the value is 100 entries.
+            * The page size can never be larger than 250 entries. Optional.
+            */
+            private int maxResults;
+
+            /** Maximum number of entries returned on one result page. By default the value is 100 entries. The
+            page size can never be larger than 250 entries. Optional.
+            [minimum: 1]
+            */
+            public int getMaxResults() {
+                return maxResults;
+            }
+
+            /**
+            * Maximum number of entries returned on one result page. By default the value is 100 entries.
+            * The page size can never be larger than 250 entries. Optional.
+            */
+            public List setMaxResults(int maxResults) {
+                this.maxResults = maxResults;
+                return cast(List) super.set!int("maxResults", maxResults);
+            }
+
+            /** Token specifying which result page to return. Optional. */
+            private string pageToken;
+
+            /** Token specifying which result page to return. Optional.
+            */
+            public string getPageToken() {
+                return pageToken;
+            }
+
+            /** Token specifying which result page to return. Optional. */
+            public List setPageToken(string pageToken) {
+                this.pageToken = pageToken;
+                return cast(List) super.set("pageToken", pageToken);
+            }
+
+            /**
+            * Token obtained from the nextSyncToken field returned on the last page of results from the
+            * previous list request. It makes the result of this list request contain only entries that
+            * have changed since then. If the syncToken expires, the server will respond with a 410 GONE
+            * response code and the client should clear its storage and perform a full synchronization
+            * without any syncToken. Learn more about incremental synchronization. Optional. The default
+            * is to return all entries.
+            */
+            private string syncToken;
+
+            /** Token obtained from the nextSyncToken field returned on the last page of results from the previous
+            list request. It makes the result of this list request contain only entries that have changed since
+            then. If the syncToken expires, the server will respond with a 410 GONE response code and the
+            client should clear its storage and perform a full synchronization without any syncToken. Learn
+            more about incremental synchronization. Optional. The default is to return all entries.
+            */
+            public string getSyncToken() {
+                return syncToken;
+            }
+
+            /**
+            * Token obtained from the nextSyncToken field returned on the last page of results from the
+            * previous list request. It makes the result of this list request contain only entries that
+            * have changed since then. If the syncToken expires, the server will respond with a 410 GONE
+            * response code and the client should clear its storage and perform a full synchronization
+            * without any syncToken. Learn more about incremental synchronization. Optional. The default
+            * is to return all entries.
+            */
+            public List setSyncToken(string syncToken) {
+                this.syncToken = syncToken;
+                return cast(List) super.set("syncToken", syncToken);
+            }
+
+            override public List set(T)(string parameterName, T value) {
+                return cast(List) super.set!T(parameterName, value);
+            }
+
+            public gcalendar.models.settings.Settings execute() {
+                return super.exec!"GET"();
+            }
+        }
+
+        public Watch!(Request, Response) watch(gcalendar.models.channel.Channel content) {
+            Watch!(Request, Response) result = new Watch!(Request, Response)(content);
+            initialize!(Request, Response, Watch)(result);
+            return result;
+        }
+
+        public class Watch(RequestT = Request, ResponseT = Respones) :
+            APIRequest!(gcalendar.models.channel.Channel, RequestT, ResponseT) {
+            private static const string REST_PATH = "users/me/settings/watch";
+
+            protected this(gcalendar.models.channel.Channel content) {
+                super(DEFAULT_BASE_URL ~ REST_PATH, content);
+            }
+
+            override {
+                public Watch setAlt(string alt) {
+                    return cast(Watch) super.setAlt(alt);
+                }
+
+                public Watch setFields(string fields) {
+                    return cast(Watch) super.setFields(fields);
+                }
+
+                public Watch setKey(string key) {
+                    return cast(Watch) super.setKey(key);
+                }
+
+                public Watch setOauthToken(string oauthToken) {
+                    return cast(Watch) super.setOauthToken(oauthToken);
+                }
+
+                public Watch setPrettyPrint(bool prettyPrint) {
+                    return cast(Watch) super.setPrettyPrint(prettyPrint);
+                }
+
+                public Watch setQuotaUser(string quotaUser) {
+                    return cast(Watch) super.setQuotaUser(quotaUser);
+                }
+
+                public Watch setUserIp(string userIp) {
+                    return cast(Watch) super.setUserIp(userIp);
+                }
+            }
+
+            /**
+            * Maximum number of entries returned on one result page. By default the value is 100 entries.
+            * The page size can never be larger than 250 entries. Optional.
+            */
+            private int maxResults;
+
+            /** Maximum number of entries returned on one result page. By default the value is 100 entries. The
+            page size can never be larger than 250 entries. Optional.
+            [minimum: 1]
+            */
+            public int getMaxResults() {
+                return maxResults;
+            }
+
+            /**
+            * Maximum number of entries returned on one result page. By default the value is 100 entries.
+            * The page size can never be larger than 250 entries. Optional.
+            */
+            public Watch setMaxResults(int maxResults) {
+                this.maxResults = maxResults;
+                return cast(Watch) super.set!int("maxResults", maxResults);
+            }
+
+            /** Token specifying which result page to return. Optional. */
+            private string pageToken;
+
+            /** Token specifying which result page to return. Optional.
+            */
+            public string getPageToken() {
+                return pageToken;
+            }
+
+            /** Token specifying which result page to return. Optional. */
+            public Watch setPageToken(string pageToken) {
+                this.pageToken = pageToken;
+                return cast(Watch) super.set("pageToken", pageToken);
+            }
+
+            /**
+            * Token obtained from the nextSyncToken field returned on the last page of results from the
+            * previous list request. It makes the result of this list request contain only entries that
+            * have changed since then. If the syncToken expires, the server will respond with a 410 GONE
+            * response code and the client should clear its storage and perform a full synchronization
+            * without any syncToken. Learn more about incremental synchronization. Optional. The default
+            * is to return all entries.
+            */
+            private string syncToken;
+
+            /** Token obtained from the nextSyncToken field returned on the last page of results from the previous
+            list request. It makes the result of this list request contain only entries that have changed since
+            then. If the syncToken expires, the server will respond with a 410 GONE response code and the
+            client should clear its storage and perform a full synchronization without any syncToken. Learn
+            more about incremental synchronization. Optional. The default is to return all entries.
+            */
+            public string getSyncToken() {
+                return syncToken;
+            }
+
+            /**
+            * Token obtained from the nextSyncToken field returned on the last page of results from the
+            * previous list request. It makes the result of this list request contain only entries that
+            * have changed since then. If the syncToken expires, the server will respond with a 410 GONE
+            * response code and the client should clear its storage and perform a full synchronization
+            * without any syncToken. Learn more about incremental synchronization. Optional. The default
+            * is to return all entries.
+            */
+            public Watch setSyncToken(string syncToken) {
+                this.syncToken = syncToken;
+                return cast(Watch) super.set("syncToken", syncToken);
+            }
+
+            override public Watch set(T)(string parameterName, T value) {
+                return cast(Watch) super.set!T(parameterName, value);
+            }
+
+            public gcalendar.models.channel.Channel execute() {
+                return super.exec!"POST"();
             }
         }
     }

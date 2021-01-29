@@ -30,8 +30,8 @@ public class Gmail {
 
     private Client client;
 
-    this(Client client) {
-        this.client = client;
+    this(string credentialsFile) {
+        this.client = new Client(credentialsFile, "gmail");
     }
 
     public void initialize(RequestT, ResponseT, alias Service)

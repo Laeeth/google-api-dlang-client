@@ -16,7 +16,6 @@ import std.typecons : Nullable;
 enum string TOKEN_URI = "https://oauth2.googleapis.com/token";
 enum string DRIVE_URI = "https://www.googleapis.com/drive/v3/files";
 enum string GOOGLE_API_OAUTH_AUTH = "https://accounts.google.com/o/oauth2/v2/auth";
-enum string DRIVE_SCOPE = "https://www.googleapis.com/auth/drive";
 
 enum string[string] SCOPES = [
 	"gdrive": "https://www.googleapis.com/auth/drive",
@@ -68,14 +67,14 @@ class Client {
     string code = "";
     Socket reads = null;
     auto listener = new TcpSocket();
-    assert(listener.isAlive);
+    enforce(listener.isAlive);
 
     listener.bind(new InternetAddress(port));
     listener.listen(10);
 
     reads = listener.accept();
-    assert(reads.isAlive);
-    assert(listener.isAlive);
+    enforce(reads.isAlive);
+    enforce(listener.isAlive);
 
     char[1024] buf;
     auto dataLength = reads.receive(buf[]);
@@ -119,7 +118,6 @@ class Client {
 
   	AccessToken accessToken = AccessToken(authorizeJson["access_token"].toString,
   								Clock.currTime() + to!(int)(authorizeJson["expires_in"].toString).seconds);
-  	writeln(Clock.currTime() + to!(int)(authorizeJson["expires_in"].toString).seconds);
   	auto serializedAccessToken = accessToken.cerealise;
   	write(ACCESS_TOKEN_FILE, serializedAccessToken);
   	auto  serializedRefreshToken = cerealise(cast(ubyte[])authorizeJson["refresh_token"].toString);
@@ -196,55 +194,4 @@ struct AccessToken {
 	SysTime expirationTime() {
 		return SysTime.fromSimpleString(expirationTimeString);
 	}
-}
-
-enum isMember(alias inst, string member) = {
-	mixin("return !is(typeof(inst." ~ member ~ ") == function);");
-}();
-
-auto processMember(T, alias func = "create")(T body) {
-	static if (is(T == Nullable!bool)) {
-		return JSONValue(body.get);
-	} else static if (isArray!T && isAggregateType!(ElementType!(T))) {
-		JSONValue[] ret;
-		foreach(member; body) {
-			ret ~= bodyToJSON!(ElementType!(T), func)(member);
-		}
-		return ret;
-	} else static if (is(T == SysTime)) {
-		return JSONValue(body.toString());
-	} else static if (isAggregateType!T) {
-		return bodyToJSON!(T, func)(body);
-	} else {
-		return JSONValue(body);
-	}
-}
-
-JSONValue bodyToJSON(ReqBody, alias func = "create")(ReqBody body) {
-	import std.algorithm.searching : canFind;
-	import  std.algorithm : map;
-
-	JSONValue ret;
-	bool hasClassAtrribute;
-	string[] classAttributes, memberAttributes;
-
-	if (body is null) {
-		return JSONValue.init;
-	}
-
-	bool localIsMember(string member)() { return isMember!(body, member); }
-	alias members = Filter!(localIsMember, __traits(derivedMembers, ReqBody));
-
-	classAttributes = [ __traits(getAttributes, ReqBody) ];
-	hasClassAtrribute = classAttributes.canFind(func);
-
-	foreach(idx, member; body.tupleof) {
-		memberAttributes = [ __traits(getAttributes, mixin("body." ~ members[idx])) ];
-
-		if ((memberAttributes.canFind(func) || hasClassAtrribute) && member !is typeof(member).init) {
-			ret[members[idx][1..$]] = processMember!(typeof(member), func)(member);
-		}
-	}
-
-	return ret;
 }
